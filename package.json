@@ -3,7 +3,8 @@
   "scripts": {
     "start": "node index",
     "dev": "node index",
-    "seed": "node prisma/seed"
+    "seed": "node prisma/seed",
+    "build": "prisma generate && node index.js"
   },
   "dependencies": {
     "@prisma/client": "^6.3.1",
