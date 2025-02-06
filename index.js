@@ -12,13 +12,12 @@ const PORT = process.env.PORT || 5000;
 app.use(cors());
 app.use(express.json());
 
-// Получение всех пользователей
 app.get("/users", async (req, res) => {
     const users = await prisma.user.findMany();
     res.json(users);
 });
 
-// Получение пользователя по ID
+
 app.get("/users/:id", async (req, res) => {
     const { id } = req.params; // Получаем id из параметров маршрута
     try {
@@ -39,7 +38,7 @@ app.get("/users/:id", async (req, res) => {
     }
 });
 
-// Добавление нового пользователя
+
 app.post("/users", async (req, res) => {
     const { name, email } = req.body;
     try {
@@ -50,7 +49,7 @@ app.post("/users", async (req, res) => {
     }
 });
 
-// Запуск сервера
+
 app.listen(PORT, () => {
     console.log(`🚀 Server is running on http://localhost:${PORT}`);
 });
