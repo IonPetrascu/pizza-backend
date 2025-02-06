@@ -1,8 +1,20 @@
 {
+  "type": "module",
   "scripts": {
-    "start": "node index"
+    "start": "node server",
+    "dev": "node server",
+    "seed": "node prisma/seed"
   },
   "dependencies": {
-    "express": "^4.21.2"
+    "@prisma/client": "^6.3.1",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
+    "ts-node": "^10.9.2"
+  },
+  "devDependencies": {
+    "prisma": "^6.3.1",
+    "ts-node-dev": "^2.0.0",
+    "typescript": "^5.7.3"
   }
 }
