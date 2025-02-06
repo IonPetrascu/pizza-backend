@@ -1,8 +1,8 @@
 {
   "type": "module",
   "scripts": {
-    "start": "node server",
-    "dev": "node server",
+    "start": "node index",
+    "dev": "node index",
     "seed": "node prisma/seed"
   },
   "dependencies": {
