@@ -12,6 +12,12 @@ const PORT = process.env.PORT || 5000;
 app.use(cors());
 app.use(express.json());
 
+app.get("/", async (req, res) => {
+    res.json({
+        "message": "🦄🌈✨👋🌎🌍🌏✨🌈🦄"
+    });
+});
+
 app.get("/users", async (req, res) => {
     const users = await prisma.user.findMany();
     res.json(users);
