@@ -1,5 +1,6 @@
 import express from 'express'
 import products from './products/products.routes.js'
+import ingredients from './ingredients/ingredients.routes.js'
 
 const router = express.Router();
 
@@ -11,6 +12,7 @@ router.get("/", (req, res) => {
 });
 
 router.use("/products", products);
+router.use("/ingredients", ingredients);
 
 
 
