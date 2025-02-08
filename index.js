@@ -1,11 +1,10 @@
 import express from "express";
 import cors from "cors";
-import { PrismaClient } from "@prisma/client";
 import dotenv from "dotenv";
+import api from './api/index.js'
 
 dotenv.config();
 
-const prisma = new PrismaClient();
 const app = express();
 const PORT = process.env.PORT || 5000;
 
@@ -18,7 +17,7 @@ app.get("/", async (req, res) => {
     });
 });
 
-app.get("/users", async (req, res) => {
+/* app.get("/users", async (req, res) => {
     const users = await prisma.user.findMany();
     res.json(users);
 });
@@ -53,8 +52,9 @@ app.post("/users", async (req, res) => {
     } catch (error) {
         res.status(400).json({ error: "Ошибка при создании пользователя" });
     }
-});
+}); */
 
+app.use("/api/v1", api);
 
 app.listen(PORT, () => {
     console.log(`🚀 Server is running on http://localhost:${PORT}`);
