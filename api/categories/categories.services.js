@@ -14,7 +14,11 @@ async function getCategoryById(id) {
 async function getAllCategories() {
     return await prisma.category.findMany({
         include: {
-            products: true,
+            products: {
+                include: {
+                    ingredients: true
+                }
+            }
         },
     });
 }

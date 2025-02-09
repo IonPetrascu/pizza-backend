@@ -6,8 +6,6 @@ const router = express.Router();
 // Получение всех продуктов
 router.get("/", async (req, res) => {
     try {
-        console.log(req.params);
-
         const categories = await getAllCategories();
         res.json(categories);
     } catch (error) {
