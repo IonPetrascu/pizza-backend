@@ -1,5 +1,5 @@
 import express from "express"
-import { getCart } from "./categories.services.js";
+import { getCart } from "./cart.services.js";
 
 const router = express.Router();
 

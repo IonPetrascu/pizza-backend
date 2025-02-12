@@ -1,21 +1,21 @@
 import { prisma } from '../../prisma/prisma-client.js'
 
 
-async function getCart(/* token, userId */) {
-
-    const token = "11111"
+async function getCart() {
+    const token = "11111";
 
     return await prisma.cart.findFirst({
-        where: { OR: [{ token }, { userId }] },
+        where: { token },
         include: {
-            products: {
-                include: { ingredients: true }
+            items: {
+                include: {
+                    product: true, // если есть связь с `Product`
+                }
             }
         }
-    }
-    )
-
+    });
 }
+
 
 
 
