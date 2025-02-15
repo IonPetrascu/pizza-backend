@@ -39,6 +39,7 @@ model Product {
 
   name     String
   imageUrl String
+  price    Int
 
   ingredients Ingredient[]
 
@@ -86,7 +87,7 @@ model CartItem {
   cart   Cart @relation(fields: [cartId], references: [id])
   cartId Int
 
-  product Product  @relation(fields: [productId], references: [id])
+  product   Product @relation(fields: [productId], references: [id])
   productId Int
 
   quantity Int @default(1)
