@@ -14,4 +14,35 @@ async function getAllProducts() {
     return await prisma.product.findMany();
 }
 
-export { getProductById, getAllProducts }
+
+async function createProduct({ name, imageUrl, price, categoryId }) {
+    return await prisma.product.create({
+        data: {
+            name,
+            imageUrl,
+            price,
+            categoryId
+        },
+    });
+}
+
+async function deleteProduct(id) {
+    const product = await prisma.product.findUnique({ where: { id } });
+    if (!product) return null;
+
+    await prisma.product.delete({ where: { id } });
+    return product;
+}
+
+async function updateProduct(id, updateData) {
+    return prisma.product.update({
+        where: { id },
+        data: updateData
+    });
+};
+
+
+
+
+
+export { getProductById, getAllProducts, createProduct, deleteProduct, updateProduct }

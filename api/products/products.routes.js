@@ -1,5 +1,5 @@
-import express from "express"
-import { getProductById, getAllProducts } from "./products.services.js";
+import express from "express";
+import { getProductById, getAllProducts, createProduct, deleteProduct, updateProduct } from "./products.services.js";
 
 const router = express.Router();
 
@@ -27,4 +27,60 @@ router.get("/:id", async (req, res) => {
     }
 });
 
-export default router
+// Создание нового продукта
+router.post("/", async (req, res) => {
+    try {
+        const { name, imageUrl, price, categoryId } = req.body;
+        if (!name || !imageUrl || !price || !categoryId) {
+            return res.status(400).json({ error: "Missing required fields" });
+        }
+
+        const newProduct = await createProduct({ name, imageUrl, price, categoryId });
+        res.status(201).json(newProduct);
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
+// Удаление продукта по ID
+router.delete("/:id", async (req, res) => {
+    const id = Number(req.params.id);
+    if (isNaN(id)) return res.status(400).json({ error: "Invalid ID" });
+
+    try {
+        const deleted = await deleteProduct(id);
+        if (!deleted) return res.status(404).json({ message: "Product not found" });
+        res.json({ message: "Product deleted successfully" });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
+
+// Обновление продукта по ID
+router.put("/:id", async (req, res) => {
+    const id = Number(req.params.id);
+    if (isNaN(id)) return res.status(400).json({ error: "Invalid ID" });
+
+    try {
+        const { name, imageUrl, price, categoryId } = req.body;
+        // Можно сделать поля опциональными для обновления
+        const updateData = {};
+        if (name) updateData.name = name;
+        if (imageUrl) updateData.imageUrl = imageUrl;
+        if (price) updateData.price = price;
+        if (categoryId) updateData.categoryId = categoryId;
+
+        if (Object.keys(updateData).length === 0) {
+            return res.status(400).json({ error: "No fields provided for update" });
+        }
+
+        const updatedProduct = await updateProduct(id, updateData);
+        if (!updatedProduct) return res.status(404).json({ message: "Product not found" });
+        res.json(updatedProduct);
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
+export default router;
