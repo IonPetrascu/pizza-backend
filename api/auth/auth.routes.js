@@ -1,11 +1,11 @@
 import express from "express";
 import { login, register } from "./auth.services.js";
-import jwt from "jsonwebtoken";
 import { findOrCreateCart, mergeCarts } from "../cart/cart.services.js";
 import { prisma } from "../../prisma/prisma-client.js";
+import jwt from "jsonwebtoken";
+
 const router = express.Router();
 
-// Маршрут для авторизации
 router.post("/login", async (req, res) => {
   try {
     const { email, password, cartToken } = req.body;
@@ -34,20 +34,14 @@ router.post("/login", async (req, res) => {
       finalCartToken = userCart.token;
     }
 
-    const token = jwt.sign(
-      { id: user.id, email: user.email, role: user.role },
-      process.env.JWT_SECRET || "your-secret-key",
-      { expiresIn: "1h" }
-    );
-
-    res.json({ ...user, token, cartToken: finalCartToken });
+    // Используем токен из login вместо перегенерации
+    res.json({ ...user, cartToken: finalCartToken });
   } catch (error) {
     console.log('[AUTH_LOGIN] Server error', error);
     res.status(500).json({ error: error.message });
   }
 });
 
-// Маршрут для регистрации
 router.post("/register", async (req, res) => {
   try {
     const { fullName, email, password, cartToken } = req.body;
@@ -56,7 +50,7 @@ router.post("/register", async (req, res) => {
       return res.status(400).json({ error: "Missing required fields: fullName, email, or password" });
     }
 
-    const newUser = await register({ fullName, email, password }); // Передаем fullName напрямую
+    const newUser = await register({ fullName, email, password });
 
     let finalCartToken = cartToken;
     if (cartToken) {
@@ -76,7 +70,7 @@ router.post("/register", async (req, res) => {
     const token = jwt.sign(
       { id: newUser.id, email: newUser.email, role: newUser.role },
       process.env.JWT_SECRET || "your-secret-key",
-      { expiresIn: "1h" }
+      { expiresIn: "24h" }
     );
 
     res.status(201).json({ ...newUser, token, cartToken: finalCartToken });
@@ -88,5 +82,4 @@ router.post("/register", async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 });
-
 export default router;

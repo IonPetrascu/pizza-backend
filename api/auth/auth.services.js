@@ -1,5 +1,10 @@
 import { prisma } from "../../prisma/prisma-client.js";
 import bcrypt from "bcrypt";
+import jwt from "jsonwebtoken";
+
+// Секретный ключ для JWT (должен совпадать с cart.routes.js)
+const JWT_SECRET = process.env.BACKEND_JWT_SECRET || 'your-backend-jwt-secret';
+
 
 export async function login(email, password) {
   const user = await prisma.user.findUnique({
@@ -10,11 +15,31 @@ export async function login(email, password) {
     return null;
   }
 
-  return {
+  // Данные для токена
+  const payload = {
     id: user.id,
-    name: user.name, // Используем name из базы
     email: user.email,
     role: user.role || "USER",
+  };
+
+  // Генерация JWT-токена
+  const token = jwt.sign(payload, JWT_SECRET, { expiresIn: '24h' });
+
+  console.log('GENERATE TOKEN', JWT_SECRET);
+  console.log({
+    id: user.id,
+    name: user.name,
+    email: user.email,
+    role: user.role || "USER",
+    token, // Добавляем токен в ответ
+  });
+
+  return {
+    id: user.id,
+    name: user.name,
+    email: user.email,
+    role: user.role || "USER",
+    token, // Добавляем токен в ответ
   };
 }
 
@@ -31,7 +56,7 @@ export async function register({ fullName, email, password }) {
 
   const newUser = await prisma.user.create({
     data: {
-      name: fullName, // Сохраняем fullName как name в базе
+      name: fullName,
       email,
       password: hashedPassword,
       role: "USER",
@@ -41,7 +66,7 @@ export async function register({ fullName, email, password }) {
 
   return {
     id: newUser.id,
-    name: newUser.name, // Возвращаем name из базы
+    name: newUser.name,
     email: newUser.email,
     role: newUser.role,
   };
