@@ -2,7 +2,7 @@
   "type": "module",
   "scripts": {
     "start": "node index",
-    "dev": "node index",
+    "dev": "nodemon index",
     "build": "prisma generate && node index.js",
     "postinstall": "prisma generate"
   },
