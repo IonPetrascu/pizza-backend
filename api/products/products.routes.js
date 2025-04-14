@@ -1,12 +1,32 @@
 import express from "express";
-import { getProductById, getAllProducts, createProduct, deleteProduct, updateProduct, getProductsByName } from "./products.services.js";
+import { getProductById, getAllProducts, createProduct, deleteProduct, updateProduct, getProductsByName, getSimilarProductsByCategory } from "./products.services.js";
 
 const router = express.Router();
 
 // Получение всех продуктов
+// router.get("/", async (req, res) => {
+//   try {
+//     const products = await getAllProducts();
+//     res.json(products);
+//   } catch (error) {
+//     res.status(500).json({ error: error.message });
+//   }
+// });
+
 router.get("/", async (req, res) => {
   try {
-    const products = await getAllProducts();
+    const { ingredients, priceFrom, priceTo } = req.query;
+
+    // Преобразуем параметры
+    const ingredientIds = ingredients ? ingredients.split(",").map(Number) : [];
+    const minPrice = priceFrom ? Number(priceFrom) : null;
+    const maxPrice = priceTo ? Number(priceTo) : null;
+    // Проверяем корректность данных
+    if (ingredientIds.some(isNaN) || (minPrice && isNaN(minPrice)) || (maxPrice && isNaN(maxPrice))) {
+      return res.status(400).json({ error: "Invalid filter parameters" });
+    }
+
+    const products = await getAllProducts({ ingredientIds, minPrice, maxPrice });
     res.json(products);
   } catch (error) {
     res.status(500).json({ error: error.message });
@@ -102,4 +122,19 @@ router.put("/:id", async (req, res) => {
   }
 });
 
+// Получение похожих товаров по categoryId
+router.get("/similar/:id", async (req, res) => {
+  const id = Number(req.params.id);
+  if (isNaN(id)) return res.status(400).json({ error: "Invalid ID" });
+
+  try {
+    const product = await getProductById(id);
+    if (!product) return res.status(404).json({ message: "Product not found" });
+
+    const similarProducts = await getSimilarProductsByCategory(product.categoryId, id);
+    res.json(similarProducts);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
 export default router;

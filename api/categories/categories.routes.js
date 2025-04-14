@@ -1,23 +1,45 @@
 import express from "express";
-import { 
-  getCategoryById, 
-  getAllCategories, 
-  createCategory, 
-  updateCategory, 
-  deleteCategory 
+import {
+  getCategoryById,
+  getAllCategories,
+  createCategory,
+  updateCategory,
+  deleteCategory
 } from "./categories.services.js";
 
 const router = express.Router();
 
 // Получение всех категорий
+// router.get("/", async (req, res) => {
+//   try {
+//     const categories = await getAllCategories();
+//     res.json(categories);
+//   } catch (error) {
+//     res.status(500).json({ error: error.message });
+//   }
+// });
 router.get("/", async (req, res) => {
+  const { priceFrom, priceTo } = req.query;
+  console.log("GET", priceFrom, priceTo
+  );
+
   try {
-    const categories = await getAllCategories();
+    // Преобразуем параметры в числа, если они есть
+    const parsedPriceFrom = priceFrom ? Number(priceFrom) : undefined;
+    const parsedPriceTo = priceTo ? Number(priceTo) : undefined;
+
+    // Получаем категории, передавая только те параметры, которые есть
+    const categories = await getAllCategories({
+      priceFrom: parsedPriceFrom,
+      priceTo: parsedPriceTo
+    });
+
     res.json(categories);
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
 });
+
 
 // Получение категории по ID
 router.get("/:id", async (req, res) => {
